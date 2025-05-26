@@ -102,20 +102,20 @@ function Dashboard() {
             <div className="space-y-5">
               <div className="flex items-center">
                 <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-medium text-xs mr-3">
-                  JD
+                  BS
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900">John Doe</div>
+                  <div className="font-medium text-gray-900">Benjamin Salkić</div>
                   <div className="text-sm text-gray-500">Added 3 documents</div>
                 </div>
               </div>
               
               <div className="flex items-center">
                 <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white font-medium text-xs mr-3">
-                  AS
+                  FD
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900">Alice Smith</div>
+                  <div className="font-medium text-gray-900">Filip Dobnikar</div>
                   <div className="text-sm text-gray-500">Updated contract info</div>
                 </div>
               </div>
