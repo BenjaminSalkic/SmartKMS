@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Navbar } from '../components'
 
 function Chat() {
   const [message, setMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -11,6 +12,13 @@ function Chat() {
       timestamp: 'Today, 10:30 AM'
     }
   ])
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, isLoading])
+
+  const RAG_API_URL = '/api/v1'
 
   const recentConversations = [
     {
@@ -31,38 +39,81 @@ function Chat() {
   ]
 
   const suggestedQuestions = [
-    "What is the renewal date for Contract A?",
-    "What are our support hours?",
-    "Summarize the employee handbook"
+    "What are the company's core values?",
+    "How do I submit a vacation request?",
+    "What is our data retention policy?",
+    "Who should I contact for IT support?",
+    "What are the remote work guidelines?"
   ]
 
-  const handleSendMessage = (e) => {
-    e.preventDefault()
-    if (message.trim() === '') return
+  // Function to call RAG API
+  const callRAGAPI = async (query: string) => {
+    try {
+      const response = await fetch(`${RAG_API_URL}/query/non-stream`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: query,
+          user: `user-${Date.now()}`, // Generate unique user ID
+        }),
+      })
 
-    const newMessage = {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return data.answer || "I'm sorry, I couldn't generate a response."
+    } catch (error) {
+      console.error('Error calling RAG API:', error)
+      return "I'm sorry, I'm having trouble connecting to the knowledge base. Please try again."
+    }
+  }
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (message.trim() === '' || isLoading) return
+
+    const userMessage = {
       id: messages.length + 1,
       content: message,
       sender: 'user',
-      timestamp: 'Now'
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
     
-    setMessages([...messages, newMessage])
+    setMessages(prev => [...prev, userMessage])
+    const currentMessage = message
     setMessage('')
+    setIsLoading(true)
     
-    // Fake API call"replace when ready"
-    setTimeout(() => {
+    try {
+      const assistantResponse = await callRAGAPI(currentMessage)
+      
       const assistantMessage = {
         id: messages.length + 2,
-        content: `I'm looking into "${message}" for you.`,
+        content: assistantResponse,
         sender: 'assistant',
-        timestamp: 'Now'
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
-      setMessages(prevMessages => [...prevMessages, assistantMessage])
-    }, 1000)
+      
+      setMessages(prev => [...prev, assistantMessage])
+    } catch (error) {
+      console.error('Error getting response:', error)
+      const errorMessage = {
+        id: messages.length + 2,
+        content: "I apologize, but I'm experiencing technical difficulties. Please try again later.",
+        sender: 'assistant',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      }
+      setMessages(prev => [...prev, errorMessage])
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const handleQuestionClick = (question) => {
+  const handleQuestionClick = (question: string) => {
     setMessage(question)
   }
 
@@ -71,7 +122,6 @@ function Chat() {
       <Navbar />
       
       <div className="flex h-[calc(100vh-65px)]">
-        {/* Left sidebar */}
         <div className="w-72 border-r border-gray-200 p-3 flex flex-col bg-white">
           <div className="flex justify-between items-center mb-3">
             <h2 className="text-lg font-semibold text-gray-900">Recent Conversations</h2>
@@ -114,7 +164,6 @@ function Chat() {
           </div>
         </div>
 
-        {/* Main chat area */}
         <div className="flex-grow flex flex-col bg-gray-50">
           <div className="flex-grow overflow-y-auto p-5">
             {messages.map(msg => (
@@ -122,7 +171,7 @@ function Chat() {
                 <div className={`rounded-lg p-3 ${
                   msg.sender === 'assistant' ? 'bg-white border border-gray-200' : 'bg-purple-600 text-white'
                 }`}>
-                  <p>{msg.content}</p>
+                  <p className="whitespace-pre-wrap">{msg.content}</p>
                 </div>
                 <div className="flex items-center mt-1">
                   <span className="text-xs text-gray-500">{msg.timestamp}</span>
@@ -143,25 +192,47 @@ function Chat() {
                 </div>
               </div>
             ))}
+            
+            {isLoading && (
+              <div className="mb-3 max-w-3xl">
+                <div className="rounded-lg p-3 bg-white border border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-75"></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-150"></div>
+                    </div>
+                    <span className="text-sm text-gray-500">SmartAssistant is thinking...</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div ref={messagesEndRef} />
           </div>
           
-          {/* Message input */}
           <div className="border-t border-gray-200 p-3 bg-white">
             <form onSubmit={handleSendMessage} className="flex">
               <input
                 type="text"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="flex-grow rounded-l-md bg-gray-50 border border-gray-300 py-2 px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none"
-                placeholder="Type your message..."
+                disabled={isLoading}
+                className="flex-grow rounded-l-md bg-gray-50 border border-gray-300 py-2 px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                placeholder={isLoading ? "Waiting for response..." : "Type your message..."}
               />
               <button 
                 type="submit"
-                className="bg-purple-600 hover:bg-purple-700 text-white p-2 rounded-r-md"
+                disabled={isLoading || message.trim() === ''}
+                className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white p-2 rounded-r-md transition-colors"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
+                {isLoading ? (
+                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                )}
               </button>
             </form>
           </div>
