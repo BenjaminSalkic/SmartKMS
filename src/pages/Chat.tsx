@@ -46,7 +46,7 @@ function Chat() {
     "What are the remote work guidelines?"
   ]
 
-  // Function to call RAG API
+  //RAG API func
   const callRAGAPI = async (query: string) => {
     try {
       const response = await fetch(`${RAG_API_URL}/query/non-stream`, {
@@ -56,7 +56,7 @@ function Chat() {
         },
         body: JSON.stringify({
           query: query,
-          user: `user-${Date.now()}`, // Generate unique user ID
+          user: `user-${Date.now()}`, 
         }),
       })
 

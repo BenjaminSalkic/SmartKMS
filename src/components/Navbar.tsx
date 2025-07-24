@@ -22,7 +22,6 @@ function Navbar() {
             </div>
           </div>
           
-          {/* Desktop Menu - Better spacing */}
           <div className="hidden md:flex items-center space-x-4">
             <Link 
               to="/dashboard" 
@@ -66,7 +65,6 @@ function Navbar() {
             </Link>
           </div>
           
-          {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -74,7 +72,6 @@ function Navbar() {
               aria-expanded={isMenuOpen}
             >
               <span className="sr-only">Open main menu</span>
-              {/* Hamburger icon */}
               <svg 
                 className="h-6 w-6" 
                 fill="none" 
@@ -93,7 +90,6 @@ function Navbar() {
         </div>
       </div>
       
-      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-2 sm:px-3 bg-white border-t border-gray-200">

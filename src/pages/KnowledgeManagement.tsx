@@ -66,7 +66,6 @@ function KnowledgeManagement() {
 
   const handleDocumentOptionsClick = (docId: number) => {
     console.log('Options clicked for document:', docId);
-    // Implement your options menu logic here
   };
 
   return (
@@ -79,7 +78,6 @@ function KnowledgeManagement() {
         </div>
 
         <div className="flex flex-col md:flex-row gap-6">
-          {/* Left sidebar */}
           <div className="w-full md:w-64 flex-shrink-0">
             <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
               <h2 className="text-lg font-medium text-gray-900 mb-4">Categories</h2>
@@ -103,9 +101,7 @@ function KnowledgeManagement() {
             </div>
           </div>
 
-          {/* Main content */}
           <div className="flex-1">
-            {/* Top bar */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
               <div className="relative flex-1 w-full">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -147,7 +143,6 @@ function KnowledgeManagement() {
 
             <p className="text-sm text-gray-500 mb-4">{documents.length} documents</p>
 
-            {/* Document grid/list view */}
             {viewMode === 'grid' ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {documents.map((doc) => (

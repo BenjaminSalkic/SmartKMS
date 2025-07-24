@@ -8,15 +8,12 @@ function Dashboard() {
       <Navbar />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Remove this ?? */}
         <div className="mb-10">
           <h1 className="text-4xl font-bold text-gray-900">Welcome to SmartAssistant</h1>
           <p className="text-gray-600 mt-2">Your AI-powered company knowledge assistant</p>
         </div>
         
-        {/* Main Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-          {/* Knowledge Management Card */}
           <FeatureCard
             title="Knowledge Management"
             description="Manage your company's knowledge base"
@@ -36,7 +33,6 @@ function Dashboard() {
             linkText="Manage Knowledge"
           />
           
-          {/* Chat Assistant Card */}
           <FeatureCard
             title="Chat Assistant"
             description="Ask questions about your company data"
@@ -57,9 +53,7 @@ function Dashboard() {
           />
         </div>
         
-        {/* Activity and Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Recent Activity Card */}
           <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
             <div className="flex items-center mb-6">
               <div className="p-1 bg-purple-100 rounded-full mr-3">
@@ -88,7 +82,6 @@ function Dashboard() {
             </div>
           </div>
           
-          {/* Team Activity Card */}
           <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
             <div className="flex items-center mb-6">
               <div className="p-1 bg-purple-100 rounded-full mr-3">
@@ -122,7 +115,6 @@ function Dashboard() {
             </div>
           </div>
           
-          {/* Usage Stats Card */}
           <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
             <div className="flex items-center mb-6">
               <div className="p-1 bg-purple-100 rounded-full mr-3">
